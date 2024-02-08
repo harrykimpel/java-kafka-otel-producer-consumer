@@ -103,7 +103,7 @@ The demo consumer applicaton is ready when you see similar output like this:
 Once you see the above information, you can test whether your applications works as expected by executing the following script:
 
 ```shell
-curl http://localhost:8080
+curl http://localhost:8081
 ```
 
 As a result, you should see this message:
