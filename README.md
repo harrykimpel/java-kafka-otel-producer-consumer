@@ -72,7 +72,7 @@ curl http://localhost:8080
 As a result, you should see this message:
 
 ```shell
-Greetings from Spring Boot!
+Greetings from Spring Boot producer!
 ```
 
 2. Start the demoConsumer application by executing the [run.sh](./demoConsumer/run.sh) script.
@@ -109,7 +109,7 @@ curl http://localhost:8081
 As a result, you should see this message:
 
 ```shell
-Greetings from Spring Boot!
+Greetings from Spring Boot consumer!
 ```
 
 ### Creating an order - demo producer

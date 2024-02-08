@@ -20,7 +20,7 @@ public class HelloController {
 
         // Make the span the current span
         try (Scope scope = span.makeCurrent()) {
-            return "Greetings from Spring Boot!";
+            return "Greetings from Spring Boot producer!";
         } catch (Throwable t) {
             span.recordException(t);
             throw t;
