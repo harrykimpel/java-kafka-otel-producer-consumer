@@ -1,6 +1,4 @@
 
-
-
 POST http://localhost:8080/orders
 Content-Type: application/json
 
