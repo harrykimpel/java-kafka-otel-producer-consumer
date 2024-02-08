@@ -1,4 +1,4 @@
-# Java Kafka producer and consumer demo application
+# Java Kafka OpenTelemetry producer and consumer demo application
 
 This demo application contains a Kafka producer and consumer service. These applications are intended to run on a local development machine and are not designed to be deployed to some other environment.
 
