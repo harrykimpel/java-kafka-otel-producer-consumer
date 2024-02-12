@@ -18,6 +18,7 @@
 		<java.version>21</java.version>
 		<start-class>com.example.demoProducer.DemoProducerApplication</start-class>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -61,17 +62,22 @@
 			<version>1.23.1-alpha</version>
 		</dependency>
 		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-kafka-clients-2.6</artifactId>
+			<version>2.0.0-alpha</version>
+		</dependency>
+		<dependency>
+			<groupId>io.opentelemetry.instrumentation</groupId>
+			<artifactId>opentelemetry-spring-kafka-2.7</artifactId>
+			<version>2.0.0-alpha</version>
+		</dependency>
+		<dependency>
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-sdk-extension-autoconfigure</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.opentelemetry</groupId>
 			<artifactId>opentelemetry-sdk-extension-autoconfigure-spi</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>io.opentelemetry.instrumentation</groupId>
-			<artifactId>opentelemetry-kafka-clients-2.6</artifactId>
-			<version>2.0.0-alpha</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

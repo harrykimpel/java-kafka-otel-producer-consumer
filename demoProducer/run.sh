@@ -1,4 +1,5 @@
 #export JAVA_TOOL_OPTIONS="-javaagent:/Users/hkimpel/projects/kafka/java/opentelemetry-javaagent.jar"
+export JAVA_TOOL_OPTIONS="-Dotel.javaagent.debug=true -Dotel.jmx.target.system=tomcat,kafka-broker -Dotel.instrumentation.kafka.metric-reporter.enabled=true"
 export OTEL_TRACES_EXPORTER=otlp
 export OTEL_METRICS_EXPORTER=otlp
 export OTEL_LOGS_EXPORTER=otlp

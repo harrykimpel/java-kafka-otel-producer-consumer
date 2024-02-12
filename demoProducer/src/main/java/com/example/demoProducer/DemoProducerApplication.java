@@ -31,6 +31,7 @@ public class DemoProducerApplication {
 	private String otlpHeadersApiKey;
 
 	public static void main(String[] args) {
+		System.setProperty("otel.jmx.target.system", "tomcat,kafka-broker");
 		SpringApplication app = new SpringApplication(DemoProducerApplication.class);
 		app.setBannerMode(Banner.Mode.OFF);
 		app.run(args);
@@ -40,7 +41,9 @@ public class DemoProducerApplication {
 	public OpenTelemetry openTelemetry() {
 		Resource resource = Resource.getDefault().toBuilder()
 				.put(ResourceAttributes.SERVICE_NAME, "kafka-java-producer")
-				.put(ResourceAttributes.SERVICE_VERSION, "0.1.0").build();
+				.put(ResourceAttributes.SERVICE_VERSION, "0.1.0")
+				.put("otel.jmx.target.system", "tomcat,kafka-broker")
+				.put("otel.instrumentation.kafka.metric-reporter.enabled", true).build();
 
 		SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
 				.addSpanProcessor(BatchSpanProcessor.builder(OtlpGrpcSpanExporter.builder()
