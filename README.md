@@ -27,9 +27,9 @@ In case you do not have a New Relic account yet, follow these steps to get start
 
 Please follow the steps below to configure the applications.
 
-1. Enter your New Relic license key into [application.properties](./demoProducer/src/main/resources/application.properties) file for the **demoProducer** service
+1. Enter your New Relic license key into [run.sh](./demoProducer/run.sh) file for the **demoProducer** service
 
-2. **Please note**: The OTLP endpoint configuration in ```application.properties``` defaults to New Relic's US endpoint. This is correct, if you have set-up your account in US region. In case you created your New Relic account in EU region, please use the appropriate endpoint for EU.
+2. **Please note**: The OTLP endpoint configuration in ```run.sh``` defaults to New Relic's US endpoint. This is correct, if you have set-up your account in US region. In case you created your New Relic account in EU region, please use the appropriate endpoint for EU.
 
 3. Build the demoProducer
 
@@ -37,9 +37,9 @@ Please follow the steps below to configure the applications.
 mvn clean install -DskipTests
 ```
 
-4. Enter your New Relic license key into [application.properties](./demoConsumer/src/main/resources/application.properties) file for the **demoConsumer** service
+4. Enter your New Relic license key into [run.sh](./demoConsumer/run.sh) file for the **demoConsumer** service
 
-5. **Please note**: The OTLP endpoint configuration in ```application.properties``` defaults to New Relic's US endpoint. This is correct, if you have set-up your account in US region. In case you created your New Relic account in EU region, please use the appropriate endpoint for EU.
+5. **Please note**: The OTLP endpoint configuration in ```run.sh``` defaults to New Relic's US endpoint. This is correct, if you have set-up your account in US region. In case you created your New Relic account in EU region, please use the appropriate endpoint for EU.
 
 6. Build the demoConsumer
 
