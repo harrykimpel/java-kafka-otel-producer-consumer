@@ -12,5 +12,4 @@ public class DemoProducerApplication {
 		app.setBannerMode(Banner.Mode.OFF);
 		app.run(args);
 	}
-
 }
