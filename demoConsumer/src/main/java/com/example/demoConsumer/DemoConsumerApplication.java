@@ -18,5 +18,4 @@ public class DemoConsumerApplication {
 		app.setBannerMode(Banner.Mode.OFF);
 		app.run(args);
 	}
-
 }
