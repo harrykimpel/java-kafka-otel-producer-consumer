@@ -2,6 +2,8 @@ package com.example.demoConsumer;
 
 import com.example.demoProducer.Order;
 
+import java.security.SecureRandom;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -20,14 +22,17 @@ public class CreateOrderConsumer {
         log.info("Notification service received order {} ", order);
         ack.acknowledge();
 
-        ExecuteLongrunningTask();
+        Integer secondsToSleep = 3;
+        ExecuteLongrunningTask(secondsToSleep);
 
-        GetUser();
+        SecureRandom secureRandom = new SecureRandom();
+        int randomWithSecureRandom = secureRandom.nextInt(10);
+        log.info("randomWithSecureRandom: " + randomWithSecureRandom);
+        GetUser(randomWithSecureRandom);
     }
 
-    private void ExecuteLongrunningTask() {
+    private void ExecuteLongrunningTask(Integer secondsToSleep) {
         try {
-            Integer secondsToSleep = 3;
             Thread.sleep(secondsToSleep * 1000);
             log.info("Executed some long running task that took " + secondsToSleep + " seconds to run.");
         } catch (Exception ex) {
@@ -35,8 +40,8 @@ public class CreateOrderConsumer {
         }
     }
 
-    private void GetUser() {
-        String uri = "https://jsonplaceholder.typicode.com/users/1";
+    private void GetUser(Integer randomUser) {
+        String uri = "https://jsonplaceholder.typicode.com/users/" + randomUser;
         RestTemplate restTemplate = new RestTemplate();
 
         User user = restTemplate.getForObject(uri, User.class);
