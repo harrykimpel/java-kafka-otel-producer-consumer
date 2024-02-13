@@ -8,9 +8,6 @@ import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;
-import io.opentelemetry.api.trace.Span;
-import io.opentelemetry.api.trace.Tracer;
-import io.opentelemetry.context.Scope;
 
 @Service
 public class CreateOrderProducer {
@@ -27,21 +24,11 @@ public class CreateOrderProducer {
         this.createOrderTopic = createOrderTopic;
     }
 
-    public boolean sendCreateOrderEvent(Order order, Tracer tracer) throws ExecutionException, InterruptedException {
+    public boolean sendCreateOrderEvent(Order order) throws ExecutionException, InterruptedException {
 
-        Span span = tracer.spanBuilder("sendCreateOrderEvent").startSpan();
-
-        // Make the span the current span
-        try (Scope scope = span.makeCurrent()) {
-            SendResult<String, Order> sendResult = createOrderKafkaTemplate.send(createOrderTopic, order).get();
-            log.info("Create order {} event sent via Kafka", order);
-            log.info(sendResult.toString());
-            return true;
-        } catch (Throwable t) {
-            span.recordException(t);
-            throw t;
-        } finally {
-            span.end();
-        }
+        SendResult<String, Order> sendResult = createOrderKafkaTemplate.send(createOrderTopic, order).get();
+        log.info("Create order {} event sent via Kafka", order);
+        log.info(sendResult.toString());
+        return true;
     }
 }
