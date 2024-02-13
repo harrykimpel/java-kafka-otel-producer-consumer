@@ -6,8 +6,8 @@ Both services are configured to gather traces, metrics and logs by leveraging Op
 
 This repository contains two separate options of using OpenTelemetry:
 
-- [main branch](https://github.com/harrykimpel/java-kafka-otel-producer-consumer/tree/main) (similar to [otel-auto-instr branch](https://github.com/harrykimpel/java-kafka-otel-producer-consumer/tree/otel-auto-instr)): automatic instrumentation with Java uses a Java agent JAR that can be attached to any Java 8+ application.
-- [otel-manual-instr branch](https://github.com/harrykimpel/java-kafka-otel-producer-consumer/tree/otel-manual-instr): with manual instrumentation of an app, you need to use the OpenTelemetry SDK for your language. You’ll then use the SDK to initialize OpenTelemetry and the API to instrument your code.
+- [main](https://github.com/harrykimpel/java-kafka-otel-producer-consumer/tree/main) branch (similar to [otel-auto-instr](https://github.com/harrykimpel/java-kafka-otel-producer-consumer/tree/otel-auto-instr) branch): automatic instrumentation with Java uses a Java agent JAR that can be attached to any Java 8+ application.
+- [otel-manual-instr](https://github.com/harrykimpel/java-kafka-otel-producer-consumer/tree/otel-manual-instr) branch: with manual instrumentation of an app, you need to use the OpenTelemetry SDK for your language. You’ll then use the SDK to initialize OpenTelemetry and the API to instrument your code.
 
 ## Local deployment
 
