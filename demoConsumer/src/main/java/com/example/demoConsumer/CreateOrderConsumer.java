@@ -4,6 +4,7 @@ import com.example.demoProducer.Order;
 
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.context.propagation.TextMapSetter;
@@ -43,7 +44,8 @@ public class CreateOrderConsumer {
             log.info("Notification service received order {} ", order);
             ack.acknowledge();
 
-            CallDemoService();
+            CallDemoService1();
+            CallDemoService2();
 
             Integer secondsToSleep = 3;
             ExecuteLongrunningTask(secondsToSleep);
@@ -95,8 +97,8 @@ public class CreateOrderConsumer {
         }
     }
 
-    private void CallDemoService() {
-        Span span = tracer.spanBuilder("CallDemoService").startSpan();
+    private void CallDemoService1() {
+        Span span = tracer.spanBuilder("CallDemoService1").startSpan();
         // Make the span the current span
         try (Scope scope = span.makeCurrent()) {
             String uri = "http://localhost:8082";
@@ -124,6 +126,19 @@ public class CreateOrderConsumer {
             } else {
                 log.info("GET request did not work.");
             }
+        } catch (Exception t) {
+            span.recordException(t);
+            // throw t;
+        } finally {
+            span.end();
+        }
+    }
+
+    private void CallDemoService2() {
+        Span span = tracer.spanBuilder("CallDemoService2").startSpan();
+        // Make the span the current span
+        try (Scope scope = span.makeCurrent()) {
+            String uri = "http://localhost:8082";
 
             RestTemplate restTemplate = new RestTemplate();
             String resp = restTemplate.getForObject(uri, String.class);
