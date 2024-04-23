@@ -6,9 +6,16 @@ import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
+import io.opentelemetry.context.propagation.TextMapSetter;
 import io.opentelemetry.instrumentation.annotations.SpanAttribute;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.opentelemetry.semconv.SemanticAttributes;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URI;
 import java.security.SecureRandom;
 
 import org.slf4j.Logger;
@@ -35,6 +42,8 @@ public class CreateOrderConsumer {
         try (Scope scope = span.makeCurrent()) {
             log.info("Notification service received order {} ", order);
             ack.acknowledge();
+
+            CallDemoService();
 
             Integer secondsToSleep = 3;
             ExecuteLongrunningTask(secondsToSleep);
@@ -81,6 +90,49 @@ public class CreateOrderConsumer {
         } catch (Throwable t) {
             span.recordException(t);
             throw t;
+        } finally {
+            span.end();
+        }
+    }
+
+    private void CallDemoService() {
+        Span span = tracer.spanBuilder("CallDemoService").startSpan();
+        // Make the span the current span
+        try (Scope scope = span.makeCurrent()) {
+            String uri = "http://localhost:8082";
+            String userAgent = "java.net.HttpURLConnection";
+            // Span.
+            span.setAttribute("uri", uri);
+            URL obj = URI.create(uri).toURL();
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("User-Agent", userAgent);
+            int responseCode = con.getResponseCode();
+            System.out.println("GET Response Code :: " + responseCode);
+            if (responseCode == HttpURLConnection.HTTP_OK) { // success
+                BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                // print result
+                log.info("Demo Service response: " + response.toString());
+            } else {
+                log.info("GET request did not work.");
+            }
+
+            RestTemplate restTemplate = new RestTemplate();
+            String resp = restTemplate.getForObject(uri, String.class);
+
+            log.info("Demo Service response: " + resp);
+            span.setAttribute("demo.service.response", resp);
+        } catch (Exception t) {
+            span.recordException(t);
+            // throw t;
         } finally {
             span.end();
         }
