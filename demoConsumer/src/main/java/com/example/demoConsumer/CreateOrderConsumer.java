@@ -44,12 +44,8 @@ public class CreateOrderConsumer {
             log.info("Notification service received order {} ", order);
             ack.acknowledge();
 
-<<<<<<< HEAD
-            CallDemoService();
-=======
             CallDemoService1();
             CallDemoService2();
->>>>>>> 3fb7d37faffb9832395327ec25533f9de1e507c5
 
             Integer secondsToSleep = 3;
             ExecuteLongrunningTask(secondsToSleep);
@@ -101,13 +97,8 @@ public class CreateOrderConsumer {
         }
     }
 
-<<<<<<< HEAD
-    private void CallDemoService() {
-        Span span = tracer.spanBuilder("CallDemoService").startSpan();
-=======
     private void CallDemoService1() {
         Span span = tracer.spanBuilder("CallDemoService1").startSpan();
->>>>>>> 3fb7d37faffb9832395327ec25533f9de1e507c5
         // Make the span the current span
         try (Scope scope = span.makeCurrent()) {
             String uri = "http://localhost:8082";
@@ -135,13 +126,9 @@ public class CreateOrderConsumer {
             } else {
                 log.info("GET request did not work.");
             }
-<<<<<<< HEAD
-=======
         } catch (Exception t) {
             span.recordException(t);
             // throw t;
-        } finally {
-            span.end();
         }
     }
 
@@ -150,12 +137,10 @@ public class CreateOrderConsumer {
         // Make the span the current span
         try (Scope scope = span.makeCurrent()) {
             String uri = "http://localhost:8082";
->>>>>>> 3fb7d37faffb9832395327ec25533f9de1e507c5
 
             RestTemplate restTemplate = new RestTemplate();
             String resp = restTemplate.getForObject(uri, String.class);
 
-            log.info("Demo Service response: " + resp);
             span.setAttribute("demo.service.response", resp);
         } catch (Exception t) {
             span.recordException(t);
