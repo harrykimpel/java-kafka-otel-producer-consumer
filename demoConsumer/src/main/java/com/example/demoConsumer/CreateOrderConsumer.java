@@ -8,9 +8,6 @@ import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.context.propagation.TextMapSetter;
-import io.opentelemetry.instrumentation.annotations.SpanAttribute;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
-import io.opentelemetry.semconv.SemanticAttributes;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -33,6 +30,7 @@ public class CreateOrderConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(CreateOrderConsumer.class);
     private final Tracer tracer;
+    private final OpenTelemetry openTelemetry;
 
     @KafkaListener(topics = "${spring.kafka.order.topic.create-order}", containerFactory = "containerFactoryNotificationService")
     public void createOrderListener(@Payload Order order, Acknowledgment ack) {
@@ -45,6 +43,7 @@ public class CreateOrderConsumer {
             ack.acknowledge();
 
             CallDemoService1();
+
             CallDemoService2();
 
             Integer secondsToSleep = 3;
@@ -97,16 +96,38 @@ public class CreateOrderConsumer {
         }
     }
 
+    // Tell OpenTelemetry to inject the context in the HTTP headers
+    TextMapSetter<HttpURLConnection> setter = new TextMapSetter<HttpURLConnection>() {
+        @Override
+        public void set(HttpURLConnection carrier, String key, String value) {
+            // Insert the context as Header
+            carrier.setRequestProperty(key, value);
+        }
+    };
+
     private void CallDemoService1() {
-        Span span = tracer.spanBuilder("CallDemoService1").startSpan();
+        Span span = tracer.spanBuilder("get_demoService").setSpanKind(SpanKind.CLIENT).startSpan();
         // Make the span the current span
         try (Scope scope = span.makeCurrent()) {
+            io.opentelemetry.context.Context context = io.opentelemetry.context.Context.current();
+
             String uri = "http://localhost:8082";
             String userAgent = "java.net.HttpURLConnection";
-            // Span.
+
+            // Span attributes
+            span.setAttribute("http.method", "GET");
+            span.setAttribute("http.request.method", "GET");
+            span.setAttribute("http.url", uri);
+
             span.setAttribute("uri", uri);
+            span.setAttribute("demo.service.request", 1);
             URL obj = URI.create(uri).toURL();
             HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            openTelemetry.getPropagators().getTextMapPropagator().inject(
+                    context,
+                    con,
+                    setter);
+
             con.setRequestMethod("GET");
             con.setRequestProperty("User-Agent", userAgent);
             int responseCode = con.getResponseCode();
@@ -122,26 +143,35 @@ public class CreateOrderConsumer {
                 in.close();
 
                 // print result
-                log.info("Demo Service response: " + response.toString());
+                log.info("Demo Service response 1: " + response.toString());
             } else {
                 log.info("GET request did not work.");
             }
         } catch (Exception t) {
             span.recordException(t);
             // throw t;
+        } finally {
+            span.end();
         }
     }
 
     private void CallDemoService2() {
-        Span span = tracer.spanBuilder("CallDemoService2").startSpan();
+        Span span = tracer.spanBuilder("get_demoService").setSpanKind(SpanKind.CLIENT).startSpan();
         // Make the span the current span
         try (Scope scope = span.makeCurrent()) {
+
             String uri = "http://localhost:8082";
+            span.setAttribute("http.method", "GET");
+            span.setAttribute("http.request.method", "GET");
+            span.setAttribute("http.url", uri);
+            span.setAttribute("uri", uri);
+            span.setAttribute("demo.service.request", 2);
 
             RestTemplate restTemplate = new RestTemplate();
             String resp = restTemplate.getForObject(uri, String.class);
 
             span.setAttribute("demo.service.response", resp);
+            log.info("Demo Service response 2: " + resp.toString());
         } catch (Exception t) {
             span.recordException(t);
             // throw t;
@@ -152,6 +182,8 @@ public class CreateOrderConsumer {
 
     @Autowired
     CreateOrderConsumer(OpenTelemetry openTelemetry) {
+
+        this.openTelemetry = openTelemetry;
         tracer = openTelemetry.getTracer(DemoConsumerApplication.class.getName(), "0.1.0");
     }
 }

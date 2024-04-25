@@ -7,8 +7,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.baggage.propagation.W3CBaggagePropagator;
 import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.propagation.ContextPropagators;
+import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.exporter.otlp.logs.OtlpGrpcLogRecordExporter;
 import io.opentelemetry.exporter.otlp.metrics.OtlpGrpcMetricExporter;
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
@@ -49,6 +51,8 @@ public class DemoConsumerApplication {
 						.addHeader("api-key",
 								otlpHeadersApiKey)
 						.build()).build())
+
+				// .addSpanProcessor(SimpleSpanProcessor.create(LoggingSpanExporter.create()))
 				.setResource(resource)
 				.build();
 
@@ -77,7 +81,10 @@ public class DemoConsumerApplication {
 				.setTracerProvider(sdkTracerProvider)
 				.setMeterProvider(sdkMeterProvider)
 				.setLoggerProvider(sdkLoggerProvider)
-				.setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
+				// .setPropagators(ContextPropagators.create(W3CTraceContextPropagator.getInstance()))
+				.setPropagators(ContextPropagators.create(TextMapPropagator
+						.composite(W3CTraceContextPropagator.getInstance(), W3CBaggagePropagator.getInstance())))
+
 				.buildAndRegisterGlobal();
 
 		return openTelemetry;
