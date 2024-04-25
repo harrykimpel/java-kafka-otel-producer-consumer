@@ -1,10 +1,9 @@
 
-
 POST http://localhost:8080/orders
 Content-Type: application/json
 
 {
     "orderID": 1,
-    "dateOfCreation": "2024-02-08",
-    "content": "more good coffee"
+    "dateOfCreation": "2024-02-25",
+    "content": "more good coffee for Krakow"
 }
