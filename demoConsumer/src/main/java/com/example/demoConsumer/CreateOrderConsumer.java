@@ -8,6 +8,7 @@ import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.context.propagation.TextMapSetter;
+import io.opentelemetry.context.Context;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -63,16 +64,58 @@ public class CreateOrderConsumer {
 
     private void ExecuteLongrunningTask(Integer secondsToSleep) {
         Span span = tracer.spanBuilder("ExecuteLongrunningTask").startSpan();
-        span.setAttribute("secondsToSleep", secondsToSleep);
         // Make the span the current span
-        try (Scope scope = span.makeCurrent()) {
-            Thread.sleep(secondsToSleep * 1000);
-            log.info("Executed some long running task that took " + secondsToSleep + " seconds to run.");
+        try {
+            Span sleepSpan = tracer.spanBuilder("WhyTheHeckDoWeSleepHere")
+                    .setParent(Context.current().with(span))
+                    .startSpan();
+            try {
+                sleepSpan.setAttribute("secondsToSleep", secondsToSleep);
+                Thread.sleep(secondsToSleep * 1000);
+                log.info("Executed some long running task that took " + secondsToSleep + " seconds to run.");
+
+            } finally {
+                sleepSpan.end();
+            }
+
+            SomeTinyTask(span);
+
+            AnotherShortRunningTask(span);
         } catch (Exception t) {
             span.recordException(t);
             // throw t;
         } finally {
             span.end();
+        }
+    }
+
+    private void SomeTinyTask(Span parentSpan) {
+        Span childSpan = tracer.spanBuilder("SomeTinyTask")
+                .setParent(Context.current().with(parentSpan))
+                .startSpan();
+        // Make the span the current span
+        try {
+            Thread.sleep(10);
+        } catch (Exception t) {
+            childSpan.recordException(t);
+            // throw t;
+        } finally {
+            childSpan.end();
+        }
+    }
+
+    private void AnotherShortRunningTask(Span parentSpan) {
+        Span childSpan = tracer.spanBuilder("AnotherShortRunningTask")
+                .setParent(Context.current().with(parentSpan))
+                .startSpan();
+        // Make the span the current span
+        try {
+            Thread.sleep(115);
+        } catch (Exception t) {
+            childSpan.recordException(t);
+            // throw t;
+        } finally {
+            childSpan.end();
         }
     }
 
