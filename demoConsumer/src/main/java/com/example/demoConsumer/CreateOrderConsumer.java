@@ -31,10 +31,13 @@ public class CreateOrderConsumer {
 
         CallDemoService2();
 
-        Integer secondsToSleep = 3;
+        // Random number generator
+        SecureRandom secureRandom = new SecureRandom();
+
+        // Generate a random integer between 0 and 9
+        Integer secondsToSleep = secureRandom.nextInt(10);
         ExecuteLongrunningTask(secondsToSleep);
 
-        SecureRandom secureRandom = new SecureRandom();
         int randomWithSecureRandom = secureRandom.nextInt(10);
         log.info("randomWithSecureRandom: " + randomWithSecureRandom);
         GetUser(randomWithSecureRandom);

@@ -9,5 +9,6 @@ export OTEL_EXPORTER_OTLP_ENDPOINT='https://otlp.nr-data.net'
 export OTEL_EXPORTER_OTLP_HEADERS="api-key=NEW_RELIC_LICENSE_KEY"
 export OTEL_SERVICE_NAME="kafka-java-consumer"
 export OTEL_SERVICE_VERSION="0.1.0"
+export OTEL_INSTRUMENTATION_METHODS_INCLUDE="com.example.demoConsumer.CreateOrderConsumer[ExecuteLongrunningTask]"
 
 ./mvnw spring-boot:run
