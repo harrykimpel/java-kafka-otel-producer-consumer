@@ -5,6 +5,6 @@ Content-Type: application/json
 
 {
     "orderID": 1,
-    "dateOfCreation": "2024-02-08",
-    "content": "more good coffee"
+    "dateOfCreation": "2024-12-04",
+    "content": "I love coffee"
 }

@@ -18,7 +18,15 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody Order order) throws ExecutionException, InterruptedException {
-        createOrderProducer.sendCreateOrderEvent(order);
+        try {
+            // createOrderProducer.sendCreateOrderEvent(order);
+            createOrderProducer.publishWithErrorHandlerExample("project-id",
+                    "otel",
+                    order);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
