@@ -27,9 +27,9 @@ public class CreateOrderConsumer {
         log.info("Notification service received order {} ", order);
         ack.acknowledge();
 
-        CallDemoService1();
+        CallDownstreamService1();
 
-        CallDemoService2();
+        CallDownstreamService2();
 
         SecureRandom secureRandom = new SecureRandom();
         int secondsToSleep = secureRandom.nextInt(5);
@@ -58,7 +58,7 @@ public class CreateOrderConsumer {
         log.info("User id: " + user.getId());
     }
 
-    private void CallDemoService1() {
+    private void CallDownstreamService1() {
         try {
             String uri = "http://localhost:8082";
             String userAgent = "java.net.HttpURLConnection";
@@ -89,7 +89,7 @@ public class CreateOrderConsumer {
         }
     }
 
-    private void CallDemoService2() {
+    private void CallDownstreamService2() {
         String uri = "http://localhost:8082";
         RestTemplate restTemplate = new RestTemplate();
         String resp = restTemplate.getForObject(uri, String.class);
