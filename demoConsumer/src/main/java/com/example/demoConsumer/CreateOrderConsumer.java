@@ -31,16 +31,16 @@ public class CreateOrderConsumer {
 
         CallDemoService2();
 
-        Integer secondsToSleep = 3;
+        SecureRandom secureRandom = new SecureRandom();
+        int secondsToSleep = secureRandom.nextInt(5);
         ExecuteLongrunningTask(secondsToSleep);
 
-        SecureRandom secureRandom = new SecureRandom();
         int randomWithSecureRandom = secureRandom.nextInt(10);
         log.info("randomWithSecureRandom: " + randomWithSecureRandom);
         GetUser(randomWithSecureRandom);
     }
 
-    private void ExecuteLongrunningTask(Integer secondsToSleep) {
+    private void ExecuteLongrunningTask(int secondsToSleep) {
         try {
             Thread.sleep(secondsToSleep * 1000);
             log.info("Executed some long running task that took " + secondsToSleep + " seconds to run.");
@@ -49,7 +49,7 @@ public class CreateOrderConsumer {
         }
     }
 
-    private void GetUser(Integer randomUser) {
+    private void GetUser(int randomUser) {
         String uri = "https://jsonplaceholder.typicode.com/users/" + randomUser;
         RestTemplate restTemplate = new RestTemplate();
 
