@@ -53,12 +53,10 @@ public class CreateOrderProducer {
         Publisher publisher = null;
 
         try {
+            log.info("Create order {} event sent via Google Cloud Pub/Sub", order);
             // Create a publisher instance with default settings bound to the topic
             publisher = Publisher.newBuilder(topicName).build();
 
-            List<String> messages = Arrays.asList("first message", "second message");
-
-            // for (final String message : messages) {
             // publish order to Google Cloud Pub/Sub
             String message = order.toString();
             ByteString data = ByteString.copyFromUtf8(message);
@@ -82,16 +80,17 @@ public class CreateOrderProducer {
                                 System.out.println(apiException.isRetryable());
                             }
                             System.out.println("Error publishing message : " + message);
+                            log.info("Error publishing message : " + message);
                         }
 
                         @Override
                         public void onSuccess(String messageId) {
                             // Once published, returns server-assigned message ids (unique within the topic)
                             System.out.println("Published message ID: " + messageId);
+                            log.info("Published message ID: " + messageId);
                         }
                     },
                     MoreExecutors.directExecutor());
-            // }
         } finally {
             if (publisher != null) {
                 // When finished with the publisher, shutdown to free up resources.
