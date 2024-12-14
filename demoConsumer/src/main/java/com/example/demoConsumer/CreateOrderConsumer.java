@@ -32,7 +32,7 @@ public class CreateOrderConsumer {
         CallDownstreamService2();
 
         SecureRandom secureRandom = new SecureRandom();
-        int secondsToSleep = secureRandom.nextInt(5);
+        int secondsToSleep = 3 + secureRandom.nextInt(5);
         ExecuteLongrunningTask(secondsToSleep);
 
         int randomWithSecureRandom = secureRandom.nextInt(10);
