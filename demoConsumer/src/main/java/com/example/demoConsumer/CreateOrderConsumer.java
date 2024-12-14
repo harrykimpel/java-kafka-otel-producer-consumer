@@ -27,20 +27,21 @@ public class CreateOrderConsumer {
         log.info("Notification service received order {} ", order);
         ack.acknowledge();
 
-        CallDemoService1();
+        CallDownstreamService1();
 
-        CallDemoService2();
-
-        Integer secondsToSleep = 3;
-        ExecuteLongrunningTask(secondsToSleep);
+        CallDownstreamService2();
 
         SecureRandom secureRandom = new SecureRandom();
+        int secondsToSleep = secureRandom.nextInt(5);
+        ;
+        ExecuteLongrunningTask(secondsToSleep);
+
         int randomWithSecureRandom = secureRandom.nextInt(10);
         log.info("randomWithSecureRandom: " + randomWithSecureRandom);
         GetUser(randomWithSecureRandom);
     }
 
-    private void ExecuteLongrunningTask(Integer secondsToSleep) {
+    private void ExecuteLongrunningTask(int secondsToSleep) {
         try {
             Thread.sleep(secondsToSleep * 1000);
             log.info("Executed some long running task that took " + secondsToSleep + " seconds to run.");
@@ -49,7 +50,7 @@ public class CreateOrderConsumer {
         }
     }
 
-    private void GetUser(Integer randomUser) {
+    private void GetUser(int randomUser) {
         String uri = "https://jsonplaceholder.typicode.com/users/" + randomUser;
         RestTemplate restTemplate = new RestTemplate();
 
@@ -58,7 +59,7 @@ public class CreateOrderConsumer {
         log.info("User id: " + user.getId());
     }
 
-    private void CallDemoService1() {
+    private void CallDownstreamService1() {
         try {
             String uri = "http://localhost:8082";
             String userAgent = "java.net.HttpURLConnection";
@@ -89,7 +90,7 @@ public class CreateOrderConsumer {
         }
     }
 
-    private void CallDemoService2() {
+    private void CallDownstreamService2() {
         String uri = "http://localhost:8082";
         RestTemplate restTemplate = new RestTemplate();
         String resp = restTemplate.getForObject(uri, String.class);
