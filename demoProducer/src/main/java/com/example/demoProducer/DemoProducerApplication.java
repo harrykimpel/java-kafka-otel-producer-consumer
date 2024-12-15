@@ -15,6 +15,7 @@ public class DemoProducerApplication {
 
 	public static void main(String[] args) {
 		// Set System property for OTel config
+		System.setProperty("otel.jmx.target.system", "tomcat,kafka-broker");
 
 		SpringApplication app = new SpringApplication(DemoProducerApplication.class);
 		app.setBannerMode(Banner.Mode.OFF);
