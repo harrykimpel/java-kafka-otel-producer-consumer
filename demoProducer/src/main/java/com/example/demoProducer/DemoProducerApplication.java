@@ -26,15 +26,12 @@ import io.opentelemetry.semconv.ResourceAttributes;
 public class DemoProducerApplication {
 
 	@Value("${otel.exporter.otlp.endpoint}")
-	private static String otlpEndpoint;
+	private String otlpEndpoint;
 	@Value("${otel.exporter.otlp.headers.api-key}")
-	private static String otlpHeadersApiKey;
-
-	@Value("${otel.jmx.target.system}")
-	private static String otlpJmxTargetSystem;
+	private String otlpHeadersApiKey;
 
 	public static void main(String[] args) {
-		System.setProperty("otel.jmx.target.system", otlpJmxTargetSystem);
+		System.setProperty("otel.jmx.target.system", "tomcat,kafka-broker");
 		SpringApplication app = new SpringApplication(DemoProducerApplication.class);
 		app.setBannerMode(Banner.Mode.OFF);
 		app.run(args);
