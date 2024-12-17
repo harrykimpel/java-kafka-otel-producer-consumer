@@ -32,6 +32,13 @@ public class CreateOrderConsumerConfig {
     @Value("${spring.kafka.order.consumer.group-id.notification}")
     private String groupId;
 
+    /**
+     * Creates and configures a Kafka ConsumerFactory for consuming Order objects.
+     * This factory is annotated with @Bean to be used in the Spring context.
+     *
+     * @return a ConsumerFactory configured with properties for consuming Order
+     *         messages.
+     */
     @Bean("orderConsumerFactoryNotificationService")
     public ConsumerFactory<String, Order> createOrderConsumerFactory() {
         Map<String, Object> props = new HashMap<>();

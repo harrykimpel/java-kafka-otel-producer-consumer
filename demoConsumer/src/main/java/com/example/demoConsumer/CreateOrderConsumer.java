@@ -33,6 +33,22 @@ public class CreateOrderConsumer {
     private final Tracer tracer;
     private final OpenTelemetry openTelemetry;
 
+    /**
+     * Listens for messages on the specified Kafka topic and processes incoming
+     * orders.
+     * 
+     * This method is triggered when a message is received on the topic defined by
+     * 'spring.kafka.order.topic.create-order'. It acknowledges the message, logs
+     * the
+     * order details, and performs several operations including calling demo
+     * services,
+     * executing a long-running task, and retrieving a user based on a random
+     * number.
+     * 
+     * @param order the order payload received from the Kafka topic
+     * @param ack   the acknowledgment object used to manually acknowledge message
+     *              processing
+     */
     @KafkaListener(topics = "${spring.kafka.order.topic.create-order}", containerFactory = "containerFactoryNotificationService")
     public void createOrderListener(@Payload Order order, Acknowledgment ack) {
 
