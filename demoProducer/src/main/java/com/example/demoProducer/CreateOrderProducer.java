@@ -27,6 +27,15 @@ public class CreateOrderProducer {
         this.createOrderTopic = createOrderTopic;
     }
 
+    /**
+     * Sends a create order event to a Kafka topic and traces the operation.
+     * 
+     * @param order  The order object to be sent as an event.
+     * @param tracer The tracer used for creating and managing spans.
+     * @return true if the event is successfully sent.
+     * @throws ExecutionException   if the send operation fails.
+     * @throws InterruptedException if the send operation is interrupted.
+     */
     public boolean sendCreateOrderEvent(Order order, Tracer tracer) throws ExecutionException, InterruptedException {
 
         Span span = tracer.spanBuilder("sendCreateOrderEvent").startSpan();
