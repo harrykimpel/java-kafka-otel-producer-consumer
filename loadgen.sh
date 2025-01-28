@@ -9,4 +9,4 @@ curl -H 'Content-Type: application/json' -X POST -d ' { "orderID": 1, "dateOfCre
 # loadgen_data.json contains the json you want to post
 
 # multiple posts using Apache Bench
-ab -p loadgen_data.json -T application/json -c 10 -n 2000 http://localhost:8080/orders
+ab -p loadgen_data.json -T application/json -c 10 -n 50 http://localhost:8080/orders
