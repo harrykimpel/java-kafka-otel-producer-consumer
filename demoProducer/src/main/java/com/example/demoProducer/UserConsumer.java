@@ -31,11 +31,7 @@ public class UserConsumer {
 
     @KafkaListener(topics = "${spring.kafka.order.topic.user}", containerFactory = "containerFactoryNotificationService")
     public void userListener(@Payload User user, Acknowledgment ack) {
-        log.info("Notification service received user {} ", user);
+        log.info("Notification service received user {} ", user.getId());
         ack.acknowledge();
-
-
     }
-
-
 }
