@@ -42,8 +42,9 @@ public class CreateOrderConsumer {
         log.info("Notification service received order {} ", order);
         ack.acknowledge();
 
-        if (order.getContent().indexOf("London") != -1) {
+        if (order.getContent().indexOf("Tea") != -1) {
             log.error("Error in order content: " + order.getContent());
+            throw new RuntimeException("Error in order content: " + order.getContent());
         }
 
         CallDemoService1();
