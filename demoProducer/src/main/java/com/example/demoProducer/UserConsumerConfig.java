@@ -2,6 +2,8 @@ package com.example.demoProducer;
 
 import com.example.demoConsumer.User;
 
+import io.opentelemetry.instrumentation.kafkaclients.v2_6.TracingConsumerInterceptor;
+
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -48,6 +50,7 @@ public class UserConsumerConfig {
     @Bean("userConsumerFactoryNotificationService")
     public ConsumerFactory<String, User> userConsumerFactory() {
         Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, TracingConsumerInterceptor.class.getName());
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.CLIENT_ID_CONFIG, UUID.randomUUID().toString());
