@@ -94,6 +94,11 @@ public class CreateOrderConsumer {
 
     private boolean sendUserEvent(User user) throws ExecutionException, InterruptedException {
 
+        if (user == null) {
+            log.error("User is null");
+            return false;
+        }
+
         userProducer.sendUserEvent(user);
 
         return true;
