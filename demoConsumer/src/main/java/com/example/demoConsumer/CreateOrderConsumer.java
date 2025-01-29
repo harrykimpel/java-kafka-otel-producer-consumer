@@ -1,6 +1,8 @@
 package com.example.demoConsumer;
 
 import com.example.demoProducer.Order;
+import com.example.demoConsumer.User;
+import com.example.demoConsumer.UserProducer;
 
 import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.trace.Span;
@@ -17,6 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URI;
 import java.security.SecureRandom;
+import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +36,9 @@ public class CreateOrderConsumer {
     private static final Logger log = LoggerFactory.getLogger(CreateOrderConsumer.class);
     private final Tracer tracer;
     private final OpenTelemetry openTelemetry;
+
+    private final UserProducer userProducer;
+
 
     /**
      * Listens for messages on the specified Kafka topic and processes incoming
@@ -70,13 +76,27 @@ public class CreateOrderConsumer {
             SecureRandom secureRandom = new SecureRandom();
             int randomWithSecureRandom = secureRandom.nextInt(10);
             log.info("randomWithSecureRandom: " + randomWithSecureRandom);
-            GetUser(randomWithSecureRandom);
+            User user = GetUser(randomWithSecureRandom);
+
+            try {
+                sendUserEvent(user);
+            } catch (ExecutionException e) {
+                throw new RuntimeException(e);
+            } catch (InterruptedException e) {
+            }
         } catch (Throwable t) {
             span.recordException(t);
             throw t;
         } finally {
             span.end();
         }
+    }
+
+    private boolean sendUserEvent(User user) throws ExecutionException, InterruptedException {
+
+        userProducer.sendUserEvent(user);
+
+        return true;
     }
 
     private void ExecuteLongrunningTask(Integer secondsToSleep) {
@@ -131,7 +151,7 @@ public class CreateOrderConsumer {
         }
     }
 
-    private void GetUser(Integer randomUser) {
+    private User GetUser(Integer randomUser) {
         Span span = tracer.spanBuilder("GetUser").startSpan();
         // Make the span the current span
         try (Scope scope = span.makeCurrent()) {
@@ -143,6 +163,8 @@ public class CreateOrderConsumer {
             log.info("User: " + user);
             log.info("User id: " + user.getId());
             span.setAttribute("user.id", user.getId());
+
+            return user;
         } catch (Throwable t) {
             span.recordException(t);
             throw t;
@@ -236,7 +258,8 @@ public class CreateOrderConsumer {
     }
 
     @Autowired
-    CreateOrderConsumer(OpenTelemetry openTelemetry) {
+    CreateOrderConsumer(OpenTelemetry openTelemetry, UserProducer userProducer) {
+        this.userProducer = userProducer;
 
         this.openTelemetry = openTelemetry;
         tracer = openTelemetry.getTracer(DemoConsumerApplication.class.getName(), "0.1.0");
