@@ -117,7 +117,7 @@ public class CreateOrderConsumer {
 
             SomeTinyTask(span);
 
-            AnotherShortRunningTask();
+            AnotherShortRunningTask(span);
         } catch (Exception t) {
             span.recordException(t);
             // throw t;
@@ -141,13 +141,18 @@ public class CreateOrderConsumer {
         }
     }
 
-    @WithSpan
-    private void AnotherShortRunningTask() {
+    private void AnotherShortRunningTask(Span parentSpan) {
+        Span childSpan = tracer.spanBuilder("AnotherShortRunningTask")
+                .setParent(Context.current().with(parentSpan))
+                .startSpan();
+        // Make the span the current span
         try {
             Thread.sleep(115);
         } catch (Exception t) {
+            childSpan.recordException(t);
             // throw t;
         } finally {
+            childSpan.end();
         }
     }
 
