@@ -8,6 +8,7 @@ import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.context.propagation.TextMapSetter;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.opentelemetry.context.Context;
 
 import java.io.BufferedReader;
@@ -96,7 +97,7 @@ public class CreateOrderConsumer {
 
             SomeTinyTask(span);
 
-            AnotherShortRunningTask(span);
+            AnotherShortRunningTask();
         } catch (Exception t) {
             span.recordException(t);
             // throw t;
@@ -120,18 +121,13 @@ public class CreateOrderConsumer {
         }
     }
 
-    private void AnotherShortRunningTask(Span parentSpan) {
-        Span childSpan = tracer.spanBuilder("AnotherShortRunningTask")
-                .setParent(Context.current().with(parentSpan))
-                .startSpan();
-        // Make the span the current span
+    @WithSpan
+    private void AnotherShortRunningTask() {
         try {
             Thread.sleep(115);
         } catch (Exception t) {
-            childSpan.recordException(t);
             // throw t;
         } finally {
-            childSpan.end();
         }
     }
 
