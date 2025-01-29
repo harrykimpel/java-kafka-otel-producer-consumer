@@ -1,6 +1,12 @@
 package com.example.demoProducer;
 
 import com.example.demoProducer.Order;
+
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
+
 import com.example.demoConsumer.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +34,28 @@ import java.util.concurrent.ExecutionException;
 public class UserConsumer {
 
     private static final Logger log = LoggerFactory.getLogger(UserConsumer.class);
+    private final Tracer tracer;
+    private final OpenTelemetry openTelemetry;
 
     @KafkaListener(topics = "${spring.kafka.order.topic.user}", containerFactory = "containerFactoryNotificationService")
     public void userListener(@Payload User user, Acknowledgment ack) {
-        log.info("Notification service received user {} ", user.getId());
-        ack.acknowledge();
+        Span span = tracer.spanBuilder("createOrderListener").startSpan();
+
+        // Make the span the current span
+        try (Scope scope = span.makeCurrent()) {
+            log.info("Notification service received user {} ", user.getId());
+            ack.acknowledge();
+        } catch (Throwable t) {
+            span.recordException(t);
+            throw t;
+        } finally {
+            span.end();
+        }
+    }
+
+    @Autowired
+    UserConsumer(OpenTelemetry openTelemetry) {
+        this.openTelemetry = openTelemetry;
+        tracer = openTelemetry.getTracer(DemoProducerApplication.class.getName(), "0.1.0");
     }
 }
