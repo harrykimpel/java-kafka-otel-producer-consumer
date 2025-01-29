@@ -178,7 +178,10 @@ public class CreateOrderConsumer {
         } catch (Throwable t) {
             span.recordException(t);
             //throw t;
-            return null;
+            User nullUser = new User();
+            nullUser.setId(-1);
+            nullUser.setName("null");
+            return nullUser;
         } finally {
             span.end();
         }
