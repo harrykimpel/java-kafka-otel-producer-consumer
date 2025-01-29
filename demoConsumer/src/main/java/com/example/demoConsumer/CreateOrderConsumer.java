@@ -177,7 +177,8 @@ public class CreateOrderConsumer {
             return user;
         } catch (Throwable t) {
             span.recordException(t);
-            throw t;
+            //throw t;
+            return null;
         } finally {
             span.end();
         }
