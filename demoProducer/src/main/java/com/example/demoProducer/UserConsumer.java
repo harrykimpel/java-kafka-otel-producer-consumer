@@ -43,6 +43,7 @@ public class UserConsumer {
 
         // Make the span the current span
         try (Scope scope = span.makeCurrent()) {
+            span.setAttribute("user.id", user.getId());
             log.info("Notification service received user {} ", user.getId());
             ack.acknowledge();
         } catch (Throwable t) {
