@@ -39,7 +39,7 @@ public class UserConsumer {
 
     @KafkaListener(topics = "${spring.kafka.order.topic.user}", containerFactory = "containerFactoryNotificationService")
     public void userListener(@Payload User user, Acknowledgment ack) {
-        Span span = tracer.spanBuilder("createOrderListener").startSpan();
+        Span span = tracer.spanBuilder("userListener").startSpan();
 
         // Make the span the current span
         try (Scope scope = span.makeCurrent()) {
@@ -48,7 +48,7 @@ public class UserConsumer {
             ack.acknowledge();
         } catch (Throwable t) {
             span.recordException(t);
-            throw t;
+            //throw t;
         } finally {
             span.end();
         }
