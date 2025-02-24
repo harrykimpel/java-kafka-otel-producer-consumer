@@ -4,7 +4,8 @@ POST http://localhost:8080/orders
 Content-Type: application/json
 
 {
-    "orderID": 1,
+    "orderId": 1,
+    "customerId": 1,
     "dateOfCreation": "2024-12-04",
     "content": "I love coffee"
 }

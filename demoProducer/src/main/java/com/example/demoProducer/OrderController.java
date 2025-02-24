@@ -10,19 +10,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.ExecutionException;
 
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.trace.Tracer;
+
 @RequestMapping("/orders")
 @RestController
 public class OrderController {
 
     private final CreateOrderProducer createOrderProducer;
+    // private final Tracer tracer;
+    private final OpenTelemetry _openTelemetry;
 
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody Order order) throws ExecutionException, InterruptedException {
         try {
             // createOrderProducer.sendCreateOrderEvent(order);
-            createOrderProducer.publishWithErrorHandlerExample("project-id",
+            createOrderProducer.publishWithErrorHandlerExample("gen-lang-client-0397825723",
                     "otel",
-                    order);
+                    order, _openTelemetry);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -31,7 +36,10 @@ public class OrderController {
     }
 
     @Autowired
-    OrderController(CreateOrderProducer createOrderProducer) {
+    OrderController(CreateOrderProducer createOrderProducer, OpenTelemetry openTelemetry) {
         this.createOrderProducer = createOrderProducer;
+        _openTelemetry = openTelemetry;
+        // tracer = openTelemetry.getTracer(DemoProducerApplication.class.getName(),
+        // "0.1.0");
     }
 }
