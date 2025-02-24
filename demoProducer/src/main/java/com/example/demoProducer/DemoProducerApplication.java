@@ -39,6 +39,7 @@ public class DemoProducerApplication {
 
 	@Bean
 	public OpenTelemetry openTelemetry() {
+
 		Resource resource = Resource.getDefault().toBuilder()
 				.put(ResourceAttributes.SERVICE_NAME, "kafka-java-producer")
 				.put(ResourceAttributes.SERVICE_VERSION, "0.1.0")
@@ -47,10 +48,8 @@ public class DemoProducerApplication {
 
 		SdkTracerProvider sdkTracerProvider = SdkTracerProvider.builder()
 				.addSpanProcessor(BatchSpanProcessor.builder(OtlpGrpcSpanExporter.builder()
-						.setEndpoint(
-								otlpEndpoint)
-						.addHeader("api-key",
-								otlpHeadersApiKey)
+						.setEndpoint(otlpEndpoint)
+						.addHeader("api-key", otlpHeadersApiKey)
 						.build()).build())
 				.setResource(resource)
 				.build();
